@@ -269,16 +269,10 @@ int main() {
                     BLACK
             );
         }
-        char *esterText = "< . ?";
-        const Vector2 esterEgg = MeasureTextEx(
-                GetFontDefault(),
-                esterText,
-                APP_SUBTITLE_FONT_SIZE,
-                1
-        );
+        char *easterEggText = "< . ?";
 
         DrawText(
-                esterText,
+                easterEggText,
                 SCREEN_WIDTH * 0.9,
                 keyY,
                 APP_SUBTITLE_FONT_SIZE,

@@ -3,6 +3,11 @@
 
 #define APP_NAME "Musical Instruments"
 
+#define BACKGROUND_COLOR RAYWHITE
+#define INSTRUMENT_NAME_COLOR ORANGE
+#define KEY_COLOR DARKBLUE
+#define APP_TITLE_COLOR VIOLET
+
 #define SCREEN_WIDTH (1100)
 #define SCREEN_HEIGHT (600)
 
@@ -50,9 +55,9 @@ static const char *tuneFiles[] = {
 };
 
 static const KeyboardKey tuneKeys[] = {
+        KEY_M,
         KEY_COMMA,
         KEY_PERIOD,
-        KEY_SLASH,
 };
 
 static const char *instrumentFiles[] = {
@@ -80,6 +85,7 @@ static const char *instrumentsNames[] = {
         "Tabla B",
         "Ek Tara",
 };
+
 static const char *instrumentKeyNames[] = {
         "A",
         "S",
@@ -92,8 +98,6 @@ static const char *instrumentKeyNames[] = {
         "V",
         "B",
 };
-
-//static const char *subTitle = "Musical Instruments";
 
 static const KeyboardKey instrumentKeys[] = {
         KEY_A,
@@ -119,9 +123,6 @@ int main() {
     Instrument instruments[NUMBER_OF_INSTRUMENTS];
 
 
-
-//    int imageWidth = (SCREEN_HEIGHT / 2) / NUMBER_OF_INSTRUMENTS;
-
     for (int i = 0; i < NUMBER_OF_INSTRUMENTS; i++) {
 
         Instrument instrument;
@@ -137,7 +138,6 @@ int main() {
         strcat(tempImageFileName, ".png");
         Image tempImage = LoadImage(tempImageFileName);
         ImageResize(&tempImage, imageWidth, imageHeight);
-//        textures[i] = LoadTextureFromImage(tempImage);
         instrument.image = LoadTextureFromImage(tempImage);
         UnloadImage(tempImage);
 
@@ -145,7 +145,6 @@ int main() {
         char tempSoundsFileName[100] = ASSETS_PATH"sounds/";
         strcat(tempSoundsFileName, instrumentFiles[i]);
         strcat(tempSoundsFileName, ".mp3");
-//        sounds[i] = LoadSound(tempSoundsFileName);
         instrument.sound = LoadSound(tempSoundsFileName);
         SetSoundVolume(instrument.sound, 1.0f);
 
@@ -184,7 +183,6 @@ int main() {
     }
 
 
-// Vector2 mousePoint = {0.0f, 0.0f};
     while (!WindowShouldClose()) {
 
 // Keyboard Input
@@ -198,8 +196,13 @@ int main() {
         // For Tunes
         for (int i = 0; i < NUMBER_OF_TUNES; ++i) {
             if (IsKeyPressed(tunes[i].key)) {
-                PlaySound(tunes[i].sound);
+                StopSoundMulti();
+                PlaySoundMulti(tunes[i].sound);
             }
+        }
+        //Stop Tune
+        if (IsKeyPressed(KEY_SLASH)) {
+            StopSoundMulti();
         }
 
 
@@ -219,7 +222,7 @@ int main() {
 
         BeginDrawing();
 
-        ClearBackground(RAYWHITE);
+        ClearBackground(BACKGROUND_COLOR);
 
         int nameY;
         int keyY;
@@ -228,7 +231,7 @@ int main() {
                     instruments[i].image,
                     (int) instruments[i].btnBound.x,
                     (int) instruments[i].btnBound.y,
-                    WHITE
+                    BACKGROUND_COLOR
             );
             const Vector2 nameTextSize = MeasureTextEx(
                     GetFontDefault(),
@@ -253,12 +256,14 @@ int main() {
                 nameY = (int) secondRowY + (int) instruments[0].image.height + (int) nameTextSize.y;
                 keyY = (int) secondRowY + (int) instruments[i].image.height + (int) keyTextSize.y + defaultSpacing;
             }
+
+
             DrawText(
                     instruments[i].name,
                     nameX,
                     nameY,
                     NAME_FONT_SIZE,
-                    BLACK
+                    INSTRUMENT_NAME_COLOR
             );
 
             DrawText(
@@ -266,17 +271,18 @@ int main() {
                     keyX,
                     keyY,
                     KEY_FONT_SIZE,
-                    BLACK
+                    KEY_COLOR
             );
+
         }
-        char *easterEggText = "< . ?";
+        char *easterEggText = "M < . ?";
 
         DrawText(
                 easterEggText,
                 SCREEN_WIDTH * 0.9,
                 keyY,
                 APP_SUBTITLE_FONT_SIZE,
-                BLACK
+                KEY_COLOR
         );
 
 
@@ -286,12 +292,13 @@ int main() {
                 APP_SUBTITLE_FONT_SIZE,
                 1
         );
+
         DrawText(
                 APP_NAME,
                 (SCREEN_WIDTH - appTitle.x) / 2,
                 keyY + defaultSpacing,
                 APP_SUBTITLE_FONT_SIZE,
-                BLACK
+                APP_TITLE_COLOR
         );
 
         EndDrawing();
